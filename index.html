@@ -4,19 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>初中数学作业辅导</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
       :root {
         color-scheme: light;
-        --bg: #0b1220;
-        --panel: rgba(255, 255, 255, 0.06);
-        --panel-2: rgba(255, 255, 255, 0.09);
-        --text: rgba(255, 255, 255, 0.92);
-        --muted: rgba(255, 255, 255, 0.65);
-        --border: rgba(255, 255, 255, 0.12);
-        --accent: #7c5cff;
-        --accent-2: #2dd4bf;
-        --danger: #fb7185;
-        --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        --bg: #f5f7fa;
+        --panel: rgba(255, 255, 255, 0.75);
+        --panel-2: rgba(255, 255, 255, 0.9);
+        --text: #1a202c;
+        --muted: #64748b;
+        --border: rgba(0, 0, 0, 0.08);
+        --accent: #6366f1;
+        --accent-2: #0d9488;
+        --danger: #ef4444;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         --radius: 16px;
         --radius-2: 12px;
         --max: 1020px;
@@ -37,9 +38,9 @@
         margin: 0;
         font-family: var(--font);
         background:
-          radial-gradient(1200px 700px at 20% 10%, rgba(124, 92, 255, 0.35), transparent 60%),
-          radial-gradient(900px 600px at 85% 25%, rgba(45, 212, 191, 0.22), transparent 55%),
-          radial-gradient(1200px 800px at 50% 120%, rgba(251, 113, 133, 0.14), transparent 60%),
+          radial-gradient(1200px 700px at 20% 10%, rgba(99, 102, 241, 0.08), transparent 60%),
+          radial-gradient(900px 600px at 85% 25%, rgba(13, 148, 136, 0.08), transparent 55%),
+          radial-gradient(1200px 800px at 50% 120%, rgba(239, 68, 68, 0.05), transparent 60%),
           var(--bg);
         color: var(--text);
       }
@@ -144,7 +145,7 @@
 
       .layout {
         display: grid;
-        grid-template-columns: 1fr 320px;
+        grid-template-columns: 1fr;
         gap: 16px;
         align-items: start;
       }
@@ -167,7 +168,8 @@
       .chat {
         display: grid;
         grid-template-rows: auto 1fr auto;
-        min-height: 70vh;
+        height: calc(100vh - 140px);
+        min-height: 500px;
       }
 
       .chat-header {
@@ -193,6 +195,26 @@
         padding: 14px 14px 18px;
         overflow: auto;
         scroll-behavior: smooth;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+      }
+
+      .messages::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      .messages::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .messages::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 99px;
+      }
+
+      .messages::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.2);
       }
 
       .messages-inner {
@@ -218,10 +240,43 @@
         border: 1px solid var(--border);
         border-radius: 18px;
         padding: 12px 12px;
-        background: rgba(255, 255, 255, 0.06);
+        background: #ffffff;
         line-height: 1.55;
-        white-space: pre-wrap;
+        /* white-space: pre-wrap; removed for markdown */
         word-break: break-word;
+      }
+
+      .bubble h1, .bubble h2, .bubble h3, .bubble h4 {
+        margin: 0.5em 0 0.3em;
+        line-height: 1.3;
+      }
+      .bubble h1 { font-size: 1.4em; }
+      .bubble h2 { font-size: 1.25em; }
+      .bubble h3 { font-size: 1.1em; }
+      .bubble p { margin: 0.5em 0; }
+      .bubble p:first-child { margin-top: 0; }
+      .bubble p:last-child { margin-bottom: 0; }
+      .bubble ul, .bubble ol { margin: 0.5em 0; padding-left: 1.4em; }
+      .bubble code {
+        background: rgba(0,0,0,0.06);
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-family: monospace;
+        color: #0f172a;
+      }
+      .bubble pre {
+        background: #f1f5f9;
+        padding: 10px;
+        border-radius: 8px;
+        overflow-x: auto;
+        border: 1px solid var(--border);
+      }
+      .bubble pre code { background: none; padding: 0; color: inherit; }
+      .bubble blockquote {
+        margin: 0.5em 0;
+        padding-left: 10px;
+        border-left: 3px solid var(--accent);
+        color: var(--muted);
       }
 
       .msg.user {
@@ -229,13 +284,17 @@
       }
 
       .msg.user .bubble {
-        background: rgba(124, 92, 255, 0.18);
-        border-color: rgba(124, 92, 255, 0.45);
+        background: #e0e7ff;
+        border-color: #c7d2fe;
+        color: #1e1b4b;
+        border-bottom-right-radius: 4px;
       }
 
       .msg.assistant .bubble {
-        background: rgba(45, 212, 191, 0.12);
-        border-color: rgba(45, 212, 191, 0.38);
+        background: #ffffff;
+        border-color: var(--border);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        border-bottom-left-radius: 4px;
       }
 
       .composer {
@@ -254,7 +313,7 @@
 
       .chip {
         border: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.05);
+        background: #ffffff;
         color: var(--text);
         border-radius: 999px;
         padding: 8px 10px;
@@ -265,7 +324,7 @@
 
       .chip:hover {
         transform: translateY(-1px);
-        background: rgba(255, 255, 255, 0.08);
+        background: #f1f5f9;
       }
 
       .row {
@@ -282,12 +341,18 @@
         resize: none;
         border-radius: var(--radius-2);
         border: 1px solid var(--border);
-        background: rgba(10, 14, 25, 0.6);
+        background: #ffffff;
         color: var(--text);
         padding: 12px 12px;
         font-size: 14px;
         line-height: 1.45;
         outline: none;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* IE 10+ */
+      }
+      
+      .input::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
       }
 
       .input:focus {
@@ -353,7 +418,7 @@
       .item {
         border: 1px solid var(--border);
         border-radius: var(--radius-2);
-        background: rgba(255, 255, 255, 0.04);
+        background: #ffffff;
         padding: 12px;
         display: grid;
         gap: 6px;
@@ -435,25 +500,6 @@
             </div>
           </div>
         </section>
-
-        <aside class="card side" aria-label="辅导提示">
-          <h2>怎么问更高效</h2>
-          <p>把题目完整发来，并说明年级、章节与你做到哪一步。</p>
-          <div class="list">
-            <div class="item">
-              <strong>题目要完整</strong>
-              <span>最好包含已知条件、要求、图形信息（可用文字描述）。</span>
-            </div>
-            <div class="item">
-              <strong>说明目标</strong>
-              <span>例如：要步骤、要思路、要检查作业、要讲解易错点。</span>
-            </div>
-            <div class="item">
-              <strong>贴出你的尝试</strong>
-              <span>我会帮你找出哪里跳步、哪里计算/变形不严谨。</span>
-            </div>
-          </div>
-        </aside>
       </section>
     </main>
 
@@ -499,12 +545,33 @@
         };
       }
 
+      const DEFAULT_MESSAGES = [
+        {
+          id: "intro-1",
+          role: "assistant",
+          text: "同学你好！我是你的专属数学辅导老师。👋\n\n不管是代数计算、几何证明，还是应用题，遇到不会的都可以发给我。\n\n**我会一步步引导你自己解出来，而不是直接给你答案哦。** 试试把题目发给我吧！",
+          time: nowTime(),
+        },
+        {
+          id: "demo-user-1",
+          role: "user",
+          text: "老师，解方程 2x + 5 = 13 怎么做？",
+          time: nowTime(),
+        },
+        {
+          id: "demo-assistant-1",
+          role: "assistant",
+          text: "我们一起来看。这道题的目标是求出 x 的值。\n\n为了让 x 单独留在等号一边，你觉得第一步应该先把哪个数移走？",
+          time: nowTime(),
+        },
+      ];
+
       function loadMessages() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) return [];
+          if (!raw) return DEFAULT_MESSAGES;
           const parsed = JSON.parse(raw);
-          if (!Array.isArray(parsed)) return [];
+          if (!Array.isArray(parsed) || parsed.length === 0) return DEFAULT_MESSAGES;
           return parsed
             .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.text === "string")
             .map((m) => ({
@@ -514,7 +581,7 @@
               time: typeof m.time === "string" ? m.time : nowTime(),
             }));
         } catch {
-          return [];
+          return DEFAULT_MESSAGES;
         }
       }
 
@@ -547,7 +614,12 @@
 
           const bubble = document.createElement("div");
           bubble.className = "bubble";
-          bubble.textContent = m.text;
+          // Use marked to parse markdown if available, otherwise fallback to textContent
+          if (typeof marked !== "undefined" && typeof marked.parse === "function") {
+             bubble.innerHTML = marked.parse(m.text);
+          } else {
+             bubble.textContent = m.text;
+          }
 
           wrap.appendChild(meta);
           wrap.appendChild(bubble);
@@ -635,17 +707,20 @@
         return String(data.reply || "");
       }
 
-      function enqueueAssistant(messages, userText) {
+      function enqueueAssistant(userText) {
         const thinking = makeMessage("assistant", "我在看题目…");
-        const next = [...messages, thinking];
-        render(next);
-        saveMessages(next);
+        // Append to global messages
+        messages = [...messages, thinking];
+        render(messages);
+        saveMessages(messages);
 
         (async () => {
           let reply = "";
           if (backendAvailable) {
             try {
-              reply = await callBackendChat(next.filter((m) => m.id !== thinking.id));
+              // Exclude the thinking message from context
+              const context = messages.filter((m) => m.id !== thinking.id);
+              reply = await callBackendChat(context);
             } catch {
               backendAvailable = false;
               els.statusPill.textContent = "离线演示模式";
@@ -655,32 +730,31 @@
             reply = buildTutorReply(userText);
           }
 
-          const replaced = next.map((m) => (m.id === thinking.id ? { ...m, text: reply, time: nowTime() } : m));
-          render(replaced);
-          saveMessages(replaced);
+          // Update the thinking message in global messages
+          messages = messages.map((m) => (m.id === thinking.id ? { ...m, text: reply, time: nowTime() } : m));
+          render(messages);
+          saveMessages(messages);
         })();
       }
 
-      function send(messages) {
+      function send() {
         const text = els.input.value.trim();
-        if (!text) return messages;
+        if (!text) return;
         els.input.value = "";
         updateComposer();
-        const next = [...messages, makeMessage("user", text)];
-        render(next);
-        saveMessages(next);
-        enqueueAssistant(next, text);
-        return next;
+        
+        const msg = makeMessage("user", text);
+        messages = [...messages, msg];
+        
+        render(messages);
+        saveMessages(messages);
+        enqueueAssistant(text);
       }
 
       let messages = loadMessages();
       if (!messages.length) {
-        messages = [
-          makeMessage(
-            "assistant",
-            "你好！把题目发我。\n建议包含：题目完整内容 + 你做到哪一步 + 想要思路还是答案。"
-          ),
-        ];
+        // Fallback if loadMessages returns empty but not default (should rarely happen now)
+        messages = DEFAULT_MESSAGES;
         saveMessages(messages);
       }
 
@@ -693,12 +767,12 @@
       els.input.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
-          messages = send(messages);
+          send();
         }
       });
 
       els.sendBtn.addEventListener("click", () => {
-        messages = send(messages);
+        send();
       });
 
       els.clearBtn.addEventListener("click", () => {
