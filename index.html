@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>初中数学作业辅导</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b1220;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel-2: rgba(255, 255, 255, 0.09);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.65);
+        --border: rgba(255, 255, 255, 0.12);
+        --accent: #7c5cff;
+        --accent-2: #2dd4bf;
+        --danger: #fb7185;
+        --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        --radius: 16px;
+        --radius-2: 12px;
+        --max: 1020px;
+        --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font);
+        background:
+          radial-gradient(1200px 700px at 20% 10%, rgba(124, 92, 255, 0.35), transparent 60%),
+          radial-gradient(900px 600px at 85% 25%, rgba(45, 212, 191, 0.22), transparent 55%),
+          radial-gradient(1200px 800px at 50% 120%, rgba(251, 113, 133, 0.14), transparent 60%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .container {
+        max-width: var(--max);
+        margin: 0 auto;
+        padding: 28px 18px 24px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .brand {
+        display: grid;
+        gap: 4px;
+        min-width: 240px;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: 0.2px;
+      }
+
+      .brand p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--muted);
+        font-size: 12px;
+        user-select: none;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 10px 12px;
+        font-size: 12px;
+        line-height: 1;
+        cursor: pointer;
+        transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.09);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-danger {
+        border-color: rgba(251, 113, 133, 0.45);
+        background: rgba(251, 113, 133, 0.14);
+      }
+
+      .btn-primary {
+        border-color: rgba(124, 92, 255, 0.55);
+        background: rgba(124, 92, 255, 0.18);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 16px;
+        align-items: start;
+      }
+
+      @media (max-width: 920px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+        overflow: hidden;
+      }
+
+      .chat {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 70vh;
+      }
+
+      .chat-header {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .chat-header strong {
+        font-size: 14px;
+        letter-spacing: 0.2px;
+      }
+
+      .chat-header span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .messages {
+        padding: 14px 14px 18px;
+        overflow: auto;
+        scroll-behavior: smooth;
+      }
+
+      .messages-inner {
+        display: grid;
+        gap: 10px;
+      }
+
+      .msg {
+        display: grid;
+        gap: 6px;
+        max-width: 92%;
+      }
+
+      .msg .meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .bubble {
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 12px 12px;
+        background: rgba(255, 255, 255, 0.06);
+        line-height: 1.55;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .msg.user {
+        justify-self: end;
+      }
+
+      .msg.user .bubble {
+        background: rgba(124, 92, 255, 0.18);
+        border-color: rgba(124, 92, 255, 0.45);
+      }
+
+      .msg.assistant .bubble {
+        background: rgba(45, 212, 191, 0.12);
+        border-color: rgba(45, 212, 191, 0.38);
+      }
+
+      .composer {
+        border-top: 1px solid var(--border);
+        padding: 12px;
+        display: grid;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .quick {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 8px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 120ms ease, transform 120ms ease;
+      }
+
+      .chip:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .input {
+        width: 100%;
+        min-height: 44px;
+        max-height: 160px;
+        resize: none;
+        border-radius: var(--radius-2);
+        border: 1px solid var(--border);
+        background: rgba(10, 14, 25, 0.6);
+        color: var(--text);
+        padding: 12px 12px;
+        font-size: 14px;
+        line-height: 1.45;
+        outline: none;
+      }
+
+      .input:focus {
+        border-color: rgba(124, 92, 255, 0.6);
+        box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.16);
+      }
+
+      .send {
+        height: 44px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(124, 92, 255, 0.55);
+        background: rgba(124, 92, 255, 0.22);
+        color: var(--text);
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 120ms ease, background 120ms ease;
+      }
+
+      .send:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .send:hover:not(:disabled) {
+        transform: translateY(-1px);
+        background: rgba(124, 92, 255, 0.28);
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .side {
+        padding: 14px 14px 16px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .side h2 {
+        margin: 0;
+        font-size: 14px;
+        letter-spacing: 0.2px;
+      }
+
+      .side p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .item {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-2);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 12px;
+        display: grid;
+        gap: 6px;
+      }
+
+      .item strong {
+        font-size: 13px;
+      }
+
+      .item span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <header class="topbar">
+        <div class="brand">
+          <h1>初中数学作业辅导</h1>
+          <p>把题目发出来，我用分步方式帮你理清思路。</p>
+        </div>
+        <div class="actions">
+          <div class="pill" id="statusPill">离线演示模式</div>
+          <button class="btn btn-primary" id="scrollToBottomBtn" type="button">回到底部</button>
+          <button class="btn btn-danger" id="clearBtn" type="button">清空对话</button>
+        </div>
+      </header>
+
+      <section class="layout">
+        <section class="card chat" aria-label="对话区">
+          <div class="chat-header">
+            <div style="display: grid; gap: 2px">
+              <strong>辅导对话</strong>
+              <span>支持 Enter 发送，Shift+Enter 换行</span>
+            </div>
+            <span id="counter">0 条消息</span>
+          </div>
+
+          <div class="messages" id="messages" role="log" aria-live="polite">
+            <div class="messages-inner" id="messagesInner"></div>
+          </div>
+
+          <div class="composer">
+            <div class="quick" aria-label="快捷提问">
+              <button class="chip" data-prompt="已知一次函数 y=2x+1，求 x=3 时 y 的值">一次函数代入</button>
+              <button class="chip" data-prompt="解方程：2(x-3)=x+5">解方程</button>
+              <button class="chip" data-prompt="计算：(-3)^2 - 2×( -4 )">有理数运算</button>
+              <button class="chip" data-prompt="已知三角形两边 5 和 7，第三边取值范围？">三角形不等式</button>
+            </div>
+
+            <div class="row">
+              <label class="sr-only" for="input">输入你的数学问题</label>
+              <textarea
+                id="input"
+                class="input"
+                placeholder="例如：解方程 3x-5=2x+7，要求写出步骤"
+                rows="1"
+              ></textarea>
+              <button id="sendBtn" class="send" type="button" disabled>发送</button>
+            </div>
+
+            <div class="hint">
+              <span>建议：发题目+你卡住的步骤+是否需要答案/只要思路</span>
+              <span id="draftHint">未输入</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card side" aria-label="辅导提示">
+          <h2>怎么问更高效</h2>
+          <p>把题目完整发来，并说明年级、章节与你做到哪一步。</p>
+          <div class="list">
+            <div class="item">
+              <strong>题目要完整</strong>
+              <span>最好包含已知条件、要求、图形信息（可用文字描述）。</span>
+            </div>
+            <div class="item">
+              <strong>说明目标</strong>
+              <span>例如：要步骤、要思路、要检查作业、要讲解易错点。</span>
+            </div>
+            <div class="item">
+              <strong>贴出你的尝试</strong>
+              <span>我会帮你找出哪里跳步、哪里计算/变形不严谨。</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script>
+      const STORAGE_KEY = "math_tutoring_chat_v1";
+
+      const els = {
+        messages: document.getElementById("messages"),
+        messagesInner: document.getElementById("messagesInner"),
+        input: document.getElementById("input"),
+        sendBtn: document.getElementById("sendBtn"),
+        clearBtn: document.getElementById("clearBtn"),
+        counter: document.getElementById("counter"),
+        draftHint: document.getElementById("draftHint"),
+        scrollToBottomBtn: document.getElementById("scrollToBottomBtn"),
+        statusPill: document.getElementById("statusPill"),
+      };
+
+      let backendAvailable = false;
+
+      function nowTime() {
+        const d = new Date();
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mm = String(d.getMinutes()).padStart(2, "0");
+        return `${hh}:${mm}`;
+      }
+
+      function escapeText(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.textContent || "";
+      }
+
+      function makeMessage(role, text) {
+        return {
+          id:
+            typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+              ? crypto.randomUUID()
+              : String(Date.now() + Math.random()),
+          role,
+          text,
+          time: nowTime(),
+        };
+      }
+
+      function loadMessages() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) return [];
+          return parsed
+            .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.text === "string")
+            .map((m) => ({
+              id: typeof m.id === "string" ? m.id : String(Date.now() + Math.random()),
+              role: m.role,
+              text: m.text,
+              time: typeof m.time === "string" ? m.time : nowTime(),
+            }));
+        } catch {
+          return [];
+        }
+      }
+
+      function saveMessages(messages) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+        } catch {
+          return;
+        }
+      }
+
+      function scrollToBottom() {
+        els.messages.scrollTop = els.messages.scrollHeight;
+      }
+
+      function render(messages) {
+        els.messagesInner.innerHTML = "";
+        for (const m of messages) {
+          const wrap = document.createElement("div");
+          wrap.className = `msg ${m.role}`;
+
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          const who = document.createElement("span");
+          who.textContent = m.role === "user" ? "你" : "辅导老师";
+          const time = document.createElement("span");
+          time.textContent = m.time;
+          meta.appendChild(who);
+          meta.appendChild(time);
+
+          const bubble = document.createElement("div");
+          bubble.className = "bubble";
+          bubble.textContent = m.text;
+
+          wrap.appendChild(meta);
+          wrap.appendChild(bubble);
+          els.messagesInner.appendChild(wrap);
+        }
+
+        els.counter.textContent = `${messages.length} 条消息`;
+        requestAnimationFrame(scrollToBottom);
+      }
+
+      function autoGrow() {
+        const el = els.input;
+        el.style.height = "auto";
+        el.style.height = Math.min(el.scrollHeight, 160) + "px";
+      }
+
+      function canSend() {
+        return els.input.value.trim().length > 0;
+      }
+
+      function updateComposer() {
+        els.sendBtn.disabled = !canSend();
+        const v = els.input.value.trim();
+        els.draftHint.textContent = v ? `草稿：${Math.min(v.length, 80)} 字符` : "未输入";
+        autoGrow();
+      }
+
+      function splitMathHint(text) {
+        const t = text.trim();
+        const hasEq = /[=]/.test(t);
+        const hasX = /[a-zA-Z]/.test(t);
+        const hasParen = /[()（）]/.test(t);
+        const hasNeg = /-/.test(t);
+        const focus = [];
+        if (hasEq && hasX) focus.push("先把含未知数的项移到一边，常数项移到另一边");
+        if (hasParen) focus.push("注意去括号：分配律，括号前是负号要变号");
+        if (hasNeg) focus.push("有理数运算先处理符号，再算绝对值");
+        if (!focus.length) focus.push("把已知条件列成式子，再按步骤化简/求解");
+        return focus;
+      }
+
+      function buildTutorReply(userText) {
+        const clean = escapeText(userText);
+        const hints = splitMathHint(clean);
+        const lines = [];
+        lines.push("我先按步骤带你做：");
+        lines.push(`1）复述题意：${clean}`);
+        lines.push("2）关键方法：");
+        for (const h of hints) lines.push(`- ${h}`);
+        lines.push("3）你先把第一步写出来发我，我帮你检查并继续推下去。");
+        lines.push("如果你想要直接答案，也可以说：要答案+步骤。");
+        return lines.join("\n");
+      }
+
+      async function checkBackend() {
+        els.statusPill.textContent = "正在检测后端…";
+        try {
+          const res = await fetch("/api/health", { method: "GET" });
+          backendAvailable = res.ok;
+        } catch {
+          backendAvailable = false;
+        }
+        els.statusPill.textContent = backendAvailable ? "已连接大模型后端" : "离线演示模式";
+      }
+
+      async function callBackendChat(allMessages) {
+        const payloadMessages = allMessages
+          .filter((m) => m && (m.role === "user" || m.role === "assistant"))
+          .slice(-12)
+          .map((m) => ({
+            role: m.role === "assistant" ? "assistant" : "user",
+            content: String(m.text || ""),
+          }));
+
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: payloadMessages }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error((data && data.error) || "后端请求失败");
+        }
+        return String(data.reply || "");
+      }
+
+      function enqueueAssistant(messages, userText) {
+        const thinking = makeMessage("assistant", "我在看题目…");
+        const next = [...messages, thinking];
+        render(next);
+        saveMessages(next);
+
+        (async () => {
+          let reply = "";
+          if (backendAvailable) {
+            try {
+              reply = await callBackendChat(next.filter((m) => m.id !== thinking.id));
+            } catch {
+              backendAvailable = false;
+              els.statusPill.textContent = "离线演示模式";
+              reply = buildTutorReply(userText);
+            }
+          } else {
+            reply = buildTutorReply(userText);
+          }
+
+          const replaced = next.map((m) => (m.id === thinking.id ? { ...m, text: reply, time: nowTime() } : m));
+          render(replaced);
+          saveMessages(replaced);
+        })();
+      }
+
+      function send(messages) {
+        const text = els.input.value.trim();
+        if (!text) return messages;
+        els.input.value = "";
+        updateComposer();
+        const next = [...messages, makeMessage("user", text)];
+        render(next);
+        saveMessages(next);
+        enqueueAssistant(next, text);
+        return next;
+      }
+
+      let messages = loadMessages();
+      if (!messages.length) {
+        messages = [
+          makeMessage(
+            "assistant",
+            "你好！把题目发我。\n建议包含：题目完整内容 + 你做到哪一步 + 想要思路还是答案。"
+          ),
+        ];
+        saveMessages(messages);
+      }
+
+      render(messages);
+      updateComposer();
+      checkBackend();
+
+      els.input.addEventListener("input", () => updateComposer());
+
+      els.input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          messages = send(messages);
+        }
+      });
+
+      els.sendBtn.addEventListener("click", () => {
+        messages = send(messages);
+      });
+
+      els.clearBtn.addEventListener("click", () => {
+        messages = [makeMessage("assistant", "已清空。把新题目发我，我们从头开始。")];
+        saveMessages(messages);
+        render(messages);
+      });
+
+      els.scrollToBottomBtn.addEventListener("click", () => scrollToBottom());
+
+      document.querySelectorAll(".chip[data-prompt]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const prompt = btn.getAttribute("data-prompt") || "";
+          const nextValue = els.input.value ? `${els.input.value.trim()}\n${prompt}` : prompt;
+          els.input.value = nextValue;
+          updateComposer();
+          els.input.focus();
+        });
+      });
+    </script>
+  </body>
+</html>

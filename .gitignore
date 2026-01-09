@@ -1,0 +1,7 @@
+application.local.json
+.env
+*.local.json
+*.local.yml
+*.local.yaml
+*.pem
+*.key
