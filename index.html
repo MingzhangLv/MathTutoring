@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>初中数学作业辅导</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <style>
       :root {
         color-scheme: light;
@@ -295,6 +298,35 @@
         border-color: var(--border);
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         border-bottom-left-radius: 4px;
+      }
+
+      .feedback-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .msg.assistant:hover .feedback-actions {
+        opacity: 1;
+      }
+      .feedback-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--muted);
+        transition: all 0.2s;
+      }
+      .feedback-btn:hover {
+        background: rgba(0,0,0,0.05);
+        color: var(--text);
+      }
+      .feedback-btn.active {
+        color: var(--accent);
+        background: rgba(99, 102, 241, 0.1);
       }
 
       .composer {
@@ -597,6 +629,29 @@
         els.messages.scrollTop = els.messages.scrollHeight;
       }
 
+      async function sendFeedback(msgId, type, btn) {
+        if (btn.classList.contains("active")) return; // Prevent duplicate votes
+        
+        try {
+          await fetch("/api/feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message_id: msgId,
+              feedback_type: type,
+              client_timestamp: nowTime()
+            }),
+          });
+          
+          // Visual feedback
+          const parent = btn.parentElement;
+          parent.querySelectorAll(".feedback-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+        } catch (e) {
+          console.error("Feedback failed", e);
+        }
+      }
+
       function render(messages) {
         els.messagesInner.innerHTML = "";
         for (const m of messages) {
@@ -614,15 +669,52 @@
 
           const bubble = document.createElement("div");
           bubble.className = "bubble";
-          // Use marked to parse markdown if available, otherwise fallback to textContent
+          
+          let content = m.text;
+          // Use marked to parse markdown if available
           if (typeof marked !== "undefined" && typeof marked.parse === "function") {
-             bubble.innerHTML = marked.parse(m.text);
-          } else {
-             bubble.textContent = m.text;
+             content = marked.parse(content);
+          }
+          bubble.innerHTML = content;
+          
+          // Render KaTeX
+          if (typeof renderMathInElement === "function") {
+            renderMathInElement(bubble, {
+              delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+              ],
+              throwOnError: false
+            });
           }
 
           wrap.appendChild(meta);
           wrap.appendChild(bubble);
+
+          // Add feedback buttons for assistant messages
+          if (m.role === "assistant" && m.id) {
+            const actions = document.createElement("div");
+            actions.className = "feedback-actions";
+            
+            const upBtn = document.createElement("button");
+            upBtn.className = "feedback-btn";
+            upBtn.innerHTML = "👍 有帮助";
+            upBtn.title = "这个回答很有帮助";
+            upBtn.onclick = () => sendFeedback(m.id, "like", upBtn);
+            
+            const downBtn = document.createElement("button");
+            downBtn.className = "feedback-btn";
+            downBtn.innerHTML = "👎 没听懂";
+            downBtn.title = "这个回答不太好";
+            downBtn.onclick = () => sendFeedback(m.id, "dislike", downBtn);
+            
+            actions.appendChild(upBtn);
+            actions.appendChild(downBtn);
+            wrap.appendChild(actions);
+          }
+
           els.messagesInner.appendChild(wrap);
         }
 
